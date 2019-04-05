@@ -141,7 +141,7 @@ int main(int argc, char** argv)
 		gluLookAt(p.x, p.y + p.h / 2, p.z, p.x - sin(angleX / 180 * PI), p.y + p.h / 2 + (tan(angleY / 180 * PI)), p.z - cos(angleX / 180 * PI), 0., 1., 0.);
 
 		//=== Draw boxes
-		int R = 30;
+		int R = 15;
 		int X = static_cast<int>(p.x / size);
 		int Y = static_cast<int>(p.y / size);
 		int Z = static_cast<int>(p.z / size);
