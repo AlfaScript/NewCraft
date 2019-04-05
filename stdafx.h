@@ -1,15 +1,15 @@
-// stdafx.h: включаемый файл дл€ стандартных системных включаемых файлов
-// или включаемых файлов дл€ конкретного проекта, которые часто используютс€, но
-// не часто измен€ютс€
-//
-
 #pragma once
 
 #include "targetver.h"
 
-#include <stdio.h>
-#include <tchar.h>
+#include <iostream>
+#include <SFML/Graphics.hpp>
+#include <SFML/OpenGL.hpp>
+#include <SFML/Window.hpp>
+#include <GL/GLU.h>
+#include <GL/GL.h>
+#include <GL/glut.h>
+#pragma comment (lib, "opengl32.lib")
+#pragma comment (lib, "glu32.lib")
 
-
-
-// TODO: ”становите здесь ссылки на дополнительные заголовки, требующиес€ дл€ программы
+#include <ctime>
