@@ -32,12 +32,12 @@ int main(int argc, char** argv)
 	if (skyBoxRand > 3)
 		skyBoxRand = 3;
 	GLuint skybox[6];
-	skybox[0] = LoadTexture("resources/skybox" + std::to_string(skyBoxRand) + "/skybox_front.bmp");
-	skybox[1] = LoadTexture("resources/skybox" + std::to_string(skyBoxRand) + "/skybox_back.bmp");
-	skybox[2] = LoadTexture("resources/skybox" + std::to_string(skyBoxRand) + "/skybox_left.bmp");
-	skybox[3] = LoadTexture("resources/skybox" + std::to_string(skyBoxRand) + "/skybox_right.bmp");
-	skybox[4] = LoadTexture("resources/skybox" + std::to_string(skyBoxRand) + "/skybox_bottom.bmp");
-	skybox[5] = LoadTexture("resources/skybox" + std::to_string(skyBoxRand) + "/skybox_top.bmp");
+	skybox[0] = LoadTexture("resources/skyBoxs/skybox" + std::to_string(skyBoxRand) + "/skybox_front.bmp");
+	skybox[1] = LoadTexture("resources/skyBoxs/skybox" + std::to_string(skyBoxRand) + "/skybox_back.bmp");
+	skybox[2] = LoadTexture("resources/skyBoxs/skybox" + std::to_string(skyBoxRand) + "/skybox_left.bmp");
+	skybox[3] = LoadTexture("resources/skyBoxs/skybox" + std::to_string(skyBoxRand) + "/skybox_right.bmp");
+	skybox[4] = LoadTexture("resources/skyBoxs/skybox" + std::to_string(skyBoxRand) + "/skybox_bottom.bmp");
+	skybox[5] = LoadTexture("resources/skyBoxs/skybox" + std::to_string(skyBoxRand) + "/skybox_top.bmp");
 	GLuint box[6];
 	box[0] = LoadTexture("resources/grassBox/side.jpg");
 	box[1] = LoadTexture("resources/grassBox/side.jpg");
@@ -48,7 +48,7 @@ int main(int argc, char** argv)
 
 	sf::Clock clock;
 	bool mLeft = false, mRight = false;
-	Player p(100.f, 200.f, 100.f);
+	Player p(200.f, 300.f, 200.f);
 
 	while (window.isOpen())
 	{
@@ -166,9 +166,9 @@ int main(int argc, char** argv)
 		createBox(skybox, 1000.f);
 		glTranslatef(-p.x, -p.y, -p.z);
 
-		window.pushGLStates();
+		/*window.pushGLStates();
 		window.draw(s);
-		window.popGLStates();
+		window.popGLStates();*/
 
 		window.display();
 	}

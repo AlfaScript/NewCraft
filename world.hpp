@@ -273,39 +273,62 @@ void menu(sf::RenderWindow & window)
 	bool isMenu = true;
 	unsigned short int menuNum = 0;
 
-	sf::Texture startGameTexture, exitTexture, aboutTexture;
-	if (!startGameTexture.loadFromFile("resources/menu/start.png"))
-	{
-		std::cerr << "Error! File (start.png) can't load" << std::endl;
-		return;
-	}
-	if(!aboutTexture.loadFromFile("resources/menu/about.png"))
-	{
-		std::cerr << "Error! File (about.png) can't load" << std::endl;
-		return;
-	}
-	if(!exitTexture.loadFromFile("resources/menu/exit.png"))
-	{
-		std::cerr << "Error! File (exit.png) can't load" << std::endl;
-		return;
-	}
+	sf::Font font;
+	font.loadFromFile("resources/menu/MightyBrush.ttf");
+	sf::Text menu1("START GAME", font, 40), menu2("ABOUT", font, 40), menu3("EXIT", font, 40);
+	menu1.setPosition(WIDTH / 6.f - 100, HEIGHT / 2.f - 60.f);
+	menu2.setPosition(WIDTH / 6.f - 100, HEIGHT / 2.f);
+	menu3.setPosition(WIDTH / 6.f - 100, HEIGHT / 2.f + 60.f);
+	
+	sf::Image background;
+	background.create(static_cast<int>(WIDTH / 3.f), HEIGHT, sf::Color(138, 130, 221, 150));
+	sf::Texture textureBackground;
+	textureBackground.loadFromImage(background);
+	sf::Sprite back(textureBackground);
 
-	sf::Sprite menu1(startGameTexture), menu2(aboutTexture), menu3(exitTexture);
-	menu1.setPosition(WIDTH / 2.f - 150, HEIGHT / 2.f - 60.f);
-	menu2.setPosition(WIDTH / 2.f - 150, HEIGHT / 2.f);
-	menu3.setPosition(WIDTH / 2.f - 150, HEIGHT / 2.f + 60.f);
+	srand(static_cast<unsigned int>(time(nullptr)));
+	unsigned int backRand = 1 + rand() % 3;
+	sf::Texture backPhotoTex;
+	if (!backPhotoTex.loadFromFile("resources/menu/backgrounds/background" + std::to_string(backRand) + ".png"))
+	{
+		std::cerr << "Error! File (background" + std::to_string(backRand) + ".png) can't load" << std::endl;
+		return;
+	}
+	sf::Sprite backPhoto(backPhotoTex);
+	backPhoto.setScale(WIDTH / static_cast<float>(backPhotoTex.getSize().x), HEIGHT / static_cast<float>(backPhotoTex.getSize().y));
 
 	while (isMenu)
 	{
 		menuNum = 0;
-		window.clear(sf::Color(129, 181, 221));
+		window.clear();
+		menu1.setFillColor(sf::Color(214, 221, 130));
+		menu2.setFillColor(sf::Color(214, 221, 130));
+		menu3.setFillColor(sf::Color(214, 221, 130));
+		menu1.setStyle(sf::Text::Regular);
+		menu2.setStyle(sf::Text::Regular);
+		menu3.setStyle(sf::Text::Regular);
 
-		if (sf::IntRect(static_cast<int>(WIDTH / 2.f) - 150, static_cast<int>(HEIGHT / 2.f) - 60, 300, 50).contains(sf::Mouse::getPosition(window)))
+		if (sf::IntRect(static_cast<int>(WIDTH / 6.f) - 100, static_cast<int>(HEIGHT / 2.f) - 60, 300, 50).contains(sf::Mouse::getPosition(window)))
+		{
+			menu1.setFillColor(sf::Color(255, 207, 133));
+			menu1.setStyle(sf::Text::Bold);
+			menu1.setCharacterSize(42);
 			menuNum = 1;
-		if (sf::IntRect(static_cast<int>(WIDTH / 2.f) - 150, static_cast<int>(HEIGHT / 2.f), 300, 50).contains(sf::Mouse::getPosition(window)))
+		}
+		if (sf::IntRect(static_cast<int>(WIDTH / 6.f) - 100, static_cast<int>(HEIGHT / 2.f), 300, 50).contains(sf::Mouse::getPosition(window)))
+		{
+			menu2.setFillColor(sf::Color(255, 207, 133));
+			menu2.setStyle(sf::Text::Bold);
+			menu2.setCharacterSize(42);
 			menuNum = 2;
-		if (sf::IntRect(static_cast<int>(WIDTH / 2.f) - 150, static_cast<int>(HEIGHT / 2.f) + 60, 300, 50).contains(sf::Mouse::getPosition(window)))
+		}
+		if (sf::IntRect(static_cast<int>(WIDTH / 6.f) - 100, static_cast<int>(HEIGHT / 2.f) + 60, 300, 50).contains(sf::Mouse::getPosition(window)))
+		{
+			menu3.setFillColor(sf::Color(255, 207, 133));
+			menu3.setStyle(sf::Text::Bold);
+			menu3.setCharacterSize(42);
 			menuNum = 3;
+		}
 
 		sf::Event event;
 		while (window.pollEvent(event))
@@ -314,30 +337,41 @@ void menu(sf::RenderWindow & window)
 			{
 				switch (menuNum)
 				{
-					case 1:
-						isMenu = false;
+				case 1:
+					isMenu = false;
 					break;
-					case 2:
-						// TODO: create picture "about";
-						
-						// window.pushGLStates();
-						// window.draw(about);
-						// window.popGLStates();
-						// window.display();
-						// while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape));
+				case 2:
+					// TODO: create picture "about";
+
+					// window.pushGLStates();
+					// window.draw(about);
+					// window.popGLStates();
+					// window.display();
+					// while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape));
 					break;
-					case 3:
-						window.close();
-						isMenu = false;
+				case 3:
+					isMenu = false;
+					window.close();
 					break;
 				}
 			}
 
 			if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))
+			{
+				isMenu = false;
 				window.close();
+			}
 		}
 
 		glClear(GL_DEPTH_BUFFER_BIT);
+
+		window.pushGLStates();
+		window.draw(backPhoto);
+		window.popGLStates();
+
+		window.pushGLStates();
+		window.draw(back);
+		window.popGLStates();
 
 		window.pushGLStates();
 		window.draw(menu1);
@@ -346,7 +380,7 @@ void menu(sf::RenderWindow & window)
 		window.pushGLStates();
 		window.draw(menu2);
 		window.popGLStates();
-		
+
 		window.pushGLStates();
 		window.draw(menu3);
 		window.popGLStates();
