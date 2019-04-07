@@ -48,7 +48,7 @@ int main(int argc, char** argv)
 
 	sf::Clock clock;
 	bool mLeft = false, mRight = false;
-	Player p(200.f, 300.f, 200.f);
+	Player p(200.f, 200.f, 200.f);
 
 	while (window.isOpen())
 	{
@@ -166,9 +166,9 @@ int main(int argc, char** argv)
 		createBox(skybox, 1000.f);
 		glTranslatef(-p.x, -p.y, -p.z);
 
-		/*window.pushGLStates();
+		window.pushGLStates();
 		window.draw(s);
-		window.popGLStates();*/
+		window.popGLStates();
 
 		window.display();
 	}

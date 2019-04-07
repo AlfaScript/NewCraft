@@ -147,11 +147,11 @@ public:
 					if (world.check(X, Y, Z))
 					{
 						if (Dx > 0.f)  x = X * size - w;
-						if (Dx < 0.f)  x = X * size + size + w;
+						else if (Dx < 0.f)  x = X * size + size + w;
 						if (Dy > 0.f)  y = Y * size - h;
-						if (Dy < 0.f) { y = Y * size + size + h; onGround = true; dy = 0.f; }
+						else if (Dy < 0.f) { y = Y * size + size + h; onGround = true; dy = 0.f; }
 						if (Dz > 0.f)  z = Z * size - d;
-						if (Dz < 0.f)  z = Z * size + size + d;
+						else if (Dz < 0.f)  z = Z * size + size + d;
 					}
 				}
 			}
@@ -274,60 +274,93 @@ void menu(sf::RenderWindow & window)
 	unsigned short int menuNum = 0;
 
 	sf::Font font;
-	font.loadFromFile("resources/menu/MightyBrush.ttf");
-	sf::Text menu1("START GAME", font, 40), menu2("ABOUT", font, 40), menu3("EXIT", font, 40);
+	font.loadFromFile("resources/menu/majorforce.ttf");
+	sf::Text menu1("START GAME", font, 50), menu2("ABOUT", font, 50), menu3("EXIT", font, 50);
 	menu1.setPosition(WIDTH / 6.f - 100, HEIGHT / 2.f - 60.f);
+	menu1.setOutlineThickness(1);
 	menu2.setPosition(WIDTH / 6.f - 100, HEIGHT / 2.f);
+	menu2.setOutlineThickness(1);
 	menu3.setPosition(WIDTH / 6.f - 100, HEIGHT / 2.f + 60.f);
+	menu3.setOutlineThickness(1);
 	
-	sf::Image background;
-	background.create(static_cast<int>(WIDTH / 3.f), HEIGHT, sf::Color(138, 130, 221, 150));
-	sf::Texture textureBackground;
-	textureBackground.loadFromImage(background);
-	sf::Sprite back(textureBackground);
-
-	srand(static_cast<unsigned int>(time(nullptr)));
-	unsigned int backRand = 1 + rand() % 3;
-	sf::Texture backPhotoTex;
-	if (!backPhotoTex.loadFromFile("resources/menu/backgrounds/background" + std::to_string(backRand) + ".png"))
+	sf::Texture background;
+	if(!background.loadFromFile("resources/menu/backgrounds/firstBackground.png"))
 	{
-		std::cerr << "Error! File (background" + std::to_string(backRand) + ".png) can't load" << std::endl;
+		std::cerr << "Error! File (firstBackground.png) can't load" << std::endl;
 		return;
 	}
-	sf::Sprite backPhoto(backPhotoTex);
-	backPhoto.setScale(WIDTH / static_cast<float>(backPhotoTex.getSize().x), HEIGHT / static_cast<float>(backPhotoTex.getSize().y));
+	sf::Sprite back(background);
+	back.setColor(sf::Color(255, 255, 255, 200));
+	int i = 1;
+	sf::Clock clock;
+	sf::Texture backPhotoTex;
+	if (!backPhotoTex.loadFromFile("resources/menu/backgrounds/background1.png"))
+	{
+		std::cerr << "Error! File (background1.png) can't load" << std::endl;
+		return;
+	}
+	sf::Texture buttonBackground;
+	if (!buttonBackground.loadFromFile("resources/menu/backgrounds/buttonBackground.png"))
+	{
+		std::cerr << "Error! File (buttonBackground.png) can't load" << std::endl;
+		return;
+	}
+	sf::Sprite backPhoto(backPhotoTex), buttonPhoto(buttonBackground);
 
 	while (isMenu)
 	{
 		menuNum = 0;
 		window.clear();
-		menu1.setFillColor(sf::Color(214, 221, 130));
-		menu2.setFillColor(sf::Color(214, 221, 130));
-		menu3.setFillColor(sf::Color(214, 221, 130));
+		menu1.setFillColor(sf::Color(255, 207, 133));
+		menu2.setFillColor(sf::Color(255, 207, 133));
+		menu3.setFillColor(sf::Color(255, 207, 133));
 		menu1.setStyle(sf::Text::Regular);
 		menu2.setStyle(sf::Text::Regular);
 		menu3.setStyle(sf::Text::Regular);
+		//==================================
+		if (clock.getElapsedTime().asSeconds() > 5.f)
+		{
+			if (i > 3)
+				i = 1;
+			if (!backPhotoTex.loadFromFile("resources/menu/backgrounds/background" + std::to_string(i) + ".png"))
+			{
+				std::cerr << "Error! File (background" + std::to_string(i) + ".png) can't load" << std::endl;
+				return;
+			}
+			backPhoto.setTexture(backPhotoTex);
+			++i;
+			clock.restart();
+		}
+		//=================================
 
 		if (sf::IntRect(static_cast<int>(WIDTH / 6.f) - 100, static_cast<int>(HEIGHT / 2.f) - 60, 300, 50).contains(sf::Mouse::getPosition(window)))
 		{
-			menu1.setFillColor(sf::Color(255, 207, 133));
+			buttonPhoto.setPosition(WIDTH / 6.f - 125, HEIGHT / 2.f - 60);
+			buttonPhoto.setScale(1.25, 1.f);
+			menu1.setFillColor(sf::Color(169, 233, 251));
 			menu1.setStyle(sf::Text::Bold);
-			menu1.setCharacterSize(42);
 			menuNum = 1;
 		}
-		if (sf::IntRect(static_cast<int>(WIDTH / 6.f) - 100, static_cast<int>(HEIGHT / 2.f), 300, 50).contains(sf::Mouse::getPosition(window)))
+		else if (sf::IntRect(static_cast<int>(WIDTH / 6.f) - 100, static_cast<int>(HEIGHT / 2.f), 300, 50).contains(sf::Mouse::getPosition(window)))
 		{
-			menu2.setFillColor(sf::Color(255, 207, 133));
+			buttonPhoto.setPosition(WIDTH / 6.f - 125, HEIGHT / 2.f);
+			buttonPhoto.setScale(0.8f, 1.f);
+			menu2.setFillColor(sf::Color(169, 233, 251));
 			menu2.setStyle(sf::Text::Bold);
-			menu2.setCharacterSize(42);
 			menuNum = 2;
 		}
-		if (sf::IntRect(static_cast<int>(WIDTH / 6.f) - 100, static_cast<int>(HEIGHT / 2.f) + 60, 300, 50).contains(sf::Mouse::getPosition(window)))
+		else if (sf::IntRect(static_cast<int>(WIDTH / 6.f) - 100, static_cast<int>(HEIGHT / 2.f) + 60, 300, 50).contains(sf::Mouse::getPosition(window)))
 		{
-			menu3.setFillColor(sf::Color(255, 207, 133));
+			buttonPhoto.setPosition(WIDTH / 6.f - 125, HEIGHT / 2.f + 60);
+			buttonPhoto.setScale(0.8f, 1.f);
+			menu3.setFillColor(sf::Color(169, 233, 251));
 			menu3.setStyle(sf::Text::Bold);
-			menu3.setCharacterSize(42);
 			menuNum = 3;
+		}
+		else
+		{
+			buttonPhoto.setPosition(-300.f, -300.f);
+			menuNum = 0;
 		}
 
 		sf::Event event;
@@ -372,6 +405,14 @@ void menu(sf::RenderWindow & window)
 		window.pushGLStates();
 		window.draw(back);
 		window.popGLStates();
+
+		if (menuNum)
+		{
+			buttonPhoto.setColor(sf::Color(255, 255, 255, 150));
+			window.pushGLStates();
+			window.draw(buttonPhoto);
+			window.popGLStates();
+		}
 
 		window.pushGLStates();
 		window.draw(menu1);
