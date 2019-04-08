@@ -270,7 +270,7 @@ void createBox(GLuint box[], float size)
 void menu(sf::RenderWindow & window) 
 {
 	ShowCursor(true);
-	bool isMenu = true;
+	bool isMenu = true, isAbout = false;
 	unsigned short int menuNum = 0;
 
 	sf::Font font;
@@ -306,6 +306,7 @@ void menu(sf::RenderWindow & window)
 		return;
 	}
 	sf::Sprite backPhoto(backPhotoTex), buttonPhoto(buttonBackground);
+	sf::Text about("The game is designed and created by Y\nThe design of the game was developed by A\nPress SPACE to next", font, 50);
 
 	while (isMenu)
 	{
@@ -332,7 +333,6 @@ void menu(sf::RenderWindow & window)
 			clock.restart();
 		}
 		//=================================
-
 		if (sf::IntRect(static_cast<int>(WIDTH / 6.f) - 100, static_cast<int>(HEIGHT / 2.f) - 60, 300, 50).contains(sf::Mouse::getPosition(window)))
 		{
 			buttonPhoto.setPosition(WIDTH / 6.f - 125, HEIGHT / 2.f - 60);
@@ -358,10 +358,7 @@ void menu(sf::RenderWindow & window)
 			menuNum = 3;
 		}
 		else
-		{
-			buttonPhoto.setPosition(-300.f, -300.f);
 			menuNum = 0;
-		}
 
 		sf::Event event;
 		while (window.pollEvent(event))
@@ -370,26 +367,22 @@ void menu(sf::RenderWindow & window)
 			{
 				switch (menuNum)
 				{
-				case 1:
-					isMenu = false;
-					break;
-				case 2:
-					// TODO: create picture "about";
-
-					// window.pushGLStates();
-					// window.draw(about);
-					// window.popGLStates();
-					// window.display();
-					// while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape));
-					break;
-				case 3:
-					isMenu = false;
-					window.close();
-					break;
+					case 1:
+						isMenu = false;
+						break;
+					case 2:
+						about.setFillColor(sf::Color(169, 233, 251));
+						about.setOutlineThickness(1);
+						isAbout = true;
+						break;
+					case 3:
+						isMenu = false;
+						window.close();
+						break;
 				}
 			}
 
-			if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))
+			else if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))
 			{
 				isMenu = false;
 				window.close();
@@ -397,6 +390,28 @@ void menu(sf::RenderWindow & window)
 		}
 
 		glClear(GL_DEPTH_BUFFER_BIT);
+
+		if (isAbout)
+		{
+			for (float y = 0.f; y < (HEIGHT / 3.f); ++y)
+			{
+				window.clear();
+				about.setPosition(WIDTH / 3.f + 50.f, y);
+				window.pushGLStates();
+				window.draw(backPhoto);
+				window.popGLStates();
+				window.pushGLStates();
+				window.draw(back);
+				window.popGLStates();
+				window.pushGLStates();
+				window.draw(about);
+				window.popGLStates();
+				window.display();
+			}
+			while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Space));
+			isAbout = false;
+			window.clear();
+		}
 
 		window.pushGLStates();
 		window.draw(backPhoto);
