@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "world.hpp"
 
 int main(int argc, char** argv)
@@ -58,7 +57,6 @@ int main(int argc, char** argv)
 		if (time > 3.f)
 			time = 3.f;
 
-
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
@@ -76,7 +74,6 @@ int main(int argc, char** argv)
 					mLeft = true;
 			}
 		}
-
 
 		glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -102,9 +99,9 @@ int main(int argc, char** argv)
 
 		if (mRight || mLeft)
 		{
-			float x = p.x;
-			float y = p.y + p.h / 2.f;
-			float z = p.z;
+			float x = p.getX();
+			float y = p.getY() + p.getH() / 2.f;
+			float z = p.getZ();
 
 			int X, Y, Z, oldX, oldY, oldZ;
 			for (int dist = 0; dist < 120; ++dist) // радиус действия
@@ -138,13 +135,13 @@ int main(int argc, char** argv)
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		gluLookAt(p.x, p.y + p.h / 2, p.z, p.x - sin(angleX / 180 * PI), p.y + p.h / 2 + (tan(angleY / 180 * PI)), p.z - cos(angleX / 180 * PI), 0., 1., 0.);
+		gluLookAt(p.getX(), p.getY() + p.getH() / 2, p.getZ(), p.getX() - sin(angleX / 180 * PI), p.getY() + p.getH() / 2 + (tan(angleY / 180 * PI)), p.getZ() - cos(angleX / 180 * PI), 0., 1., 0.);
 
 		//=== Draw boxes
 		int R = 15;
-		int X = static_cast<int>(p.x / size);
-		int Y = static_cast<int>(p.y / size);
-		int Z = static_cast<int>(p.z / size);
+		int X = static_cast<int>(p.getX() / size);
+		int Y = static_cast<int>(p.getY() / size);
+		int Z = static_cast<int>(p.getZ() / size);
 
 		for (int x = X - R; x < X + R; x++)
 		{
@@ -162,9 +159,9 @@ int main(int argc, char** argv)
 			}
 		}
 
-		glTranslatef(p.x, p.y, p.z);
+		glTranslatef(p.getX(), p.getY(), p.getZ());
 		createBox(skybox, 1000.f);
-		glTranslatef(-p.x, -p.y, -p.z);
+		glTranslatef(-p.getX(), -p.getY(), -p.getZ());
 
 		window.pushGLStates();
 		window.draw(s);
