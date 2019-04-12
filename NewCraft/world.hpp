@@ -1,6 +1,51 @@
-#include "world.hpp"
-float angleX = 0.f, angleY = 0.f;
+#pragma once
 
+class WORLD
+{
+public:
+	WORLD(size_t _worldSizeX = 1000u, size_t _worldSizeY = 200u, size_t _worldSizeZ = 1000u);
+	~WORLD();
+	bool check(int, int, int) const;
+	void setBox(int, int, int, bool);
+	void worldGeneration(int);
+private:
+	const size_t worldSizeX, worldSizeY, worldSizeZ;
+	bool world[300][50][300];
+	bool *** worlds;
+};
+
+class Player
+{
+public:
+	Player(float, float, float);
+	~Player();
+	void update(float);
+	void collision(float, float, float);
+	void keyboard(void);
+	float getX(void) const;
+	float getY(void) const;
+	float getZ(void) const;
+	float getH(void) const;
+private:
+	float x, y, z;
+	float dx, dy, dz;
+	float w, h, d;  // width, height, depth 
+	bool onGround;
+	float speed;
+};
+
+GLuint LoadTexture(sf::String);
+void createBox(GLuint[], float);
+void menu(sf::RenderWindow &);
+
+const float PI = 3.141592653f;
+const float size = 20.f;
+const uint16_t HEIGHT = sf::VideoMode::getDesktopMode().height;
+const uint16_t WIDTH = sf::VideoMode::getDesktopMode().width;
+float angleX, angleY; // Angle of rotate of camera
+WORLD world;
+
+//=== world.cpp
 GLuint LoadTexture(sf::String name)
 {
 	sf::Image image;
@@ -141,6 +186,7 @@ void menu(sf::RenderWindow & window)
 			clock.restart();
 		}
 		//=================================
+
 		if (sf::IntRect(static_cast<int>(WIDTH / 6.f) - 100, static_cast<int>(HEIGHT / 2.f) - 60, 300, 50).contains(sf::Mouse::getPosition(window)))
 		{
 			buttonPhoto.setPosition(WIDTH / 6.f - 125, HEIGHT / 2.f - 60);
@@ -268,23 +314,23 @@ Player::~Player()
 {
 }
 
-void Player::update(float time, const WORLD & world)
+void Player::update(float time)
 {
 	if (!onGround)
 		dy -= 1.5f * time;
 	onGround = false;
 
 	x += dx * time;
-	collision(dx, 0.f, 0.f, world);
+	collision(dx, 0.f, 0.f);
 	y += dy * time;
-	collision(0.f, dy, 0.f, world);
+	collision(0.f, dy, 0.f);
 	z += dz * time;
-	collision(0.f, 0.f, dz, world);
+	collision(0.f, 0.f, dz);
 
 	dx = dz = 0.f;
 }
 
-void Player::collision(float Dx, float Dy, float Dz, const WORLD & world)
+void Player::collision(float Dx, float Dy, float Dz)
 {
 	for (int X = static_cast<int>((x - w) / size); X < (x + w) / size; X++)
 	{
@@ -296,10 +342,10 @@ void Player::collision(float Dx, float Dy, float Dz, const WORLD & world)
 				{
 					if (Dx > 0.f)  x = X * size - w;
 					else if (Dx < 0.f)  x = X * size + size + w;
-					
+
 					if (Dy > 0.f)  y = Y * size - h;
 					else if (Dy < 0.f) { y = Y * size + size + h; onGround = true; dy = 0.f; }
-					
+
 					if (Dz > 0.f)  z = Z * size - d;
 					else if (Dz < 0.f)  z = Z * size + size + d;
 				}
@@ -352,24 +398,24 @@ float Player::getH(void) const { return h; }
 
 WORLD::WORLD(size_t _worldSizeX, size_t _worldSizeY, size_t _worldSizeZ) : worldSizeX(_worldSizeX), worldSizeY(_worldSizeY), worldSizeZ(_worldSizeZ)
 {
-	worlds = new bool ** [_worldSizeX];
+	/*worlds = new bool **[_worldSizeX];
 	for (size_t i = 0; i < _worldSizeX; ++i)
 	{
-		worlds[i] = new bool * [_worldSizeY];
-		for (size_t j = 0; j < _worldSizeY; ++j)
-			worlds[i][j] = new bool[_worldSizeZ];
-	}
+	worlds[i] = new bool *[_worldSizeY];
+	for (size_t j = 0; j < _worldSizeY; ++j)
+	worlds[i][j] = new bool[_worldSizeZ];
+	}*/
 }
 
 WORLD::~WORLD()
 {
-	for (size_t i = 0; i < worldSizeX; ++i)
+	/*for (size_t i = 0; i < worldSizeX; ++i)
 	{
-		for (size_t j = 0; j < worldSizeY; ++j)
-			delete[] worlds[i][j];
-		delete[] worlds[i];
+	for (size_t j = 0; j < worldSizeY; ++j)
+	delete[] worlds[i][j];
+	delete[] worlds[i];
 	}
-	delete[] worlds;
+	delete[] worlds;*/
 }
 
 bool WORLD::check(int x, int y, int z) const
@@ -407,16 +453,16 @@ void WORLD::worldGeneration(int mode)
 		break;
 	case 1:
 		/*{
-			unsigned short int prev = 1, current = 20;
-			for (int x = 0; x < worldSizeX; ++x)
-				for (int z = 0; z < worldSizeZ; ++z)
-				{
-					current = (current - prev) + rand() % current;
-					for (int y = 0; y < current; ++y)
-						world[x][y][z] = true;
-					prev = current - 1;
-					current++;
-				}
+		unsigned short int prev = 1, current = 20;
+		for (int x = 0; x < worldSizeX; ++x)
+		for (int z = 0; z < worldSizeZ; ++z)
+		{
+		current = (current - prev) + rand() % current;
+		for (int y = 0; y < current; ++y)
+		world[x][y][z] = true;
+		prev = current - 1;
+		current++;
+		}
 		}*/
 		break;
 	case 2:

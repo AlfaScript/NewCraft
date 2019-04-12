@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "world.hpp"
 
 int main(int argc, char** argv)
@@ -13,8 +14,7 @@ int main(int argc, char** argv)
 	gluPerspective(90., 1., 1., 2000.);
 	glEnable(GL_TEXTURE_2D);
 	ShowCursor(false);
-	
-	WORLD world;
+
 	world.worldGeneration(2);
 	//=== Textures
 	sf::Texture t;
@@ -79,7 +79,7 @@ int main(int argc, char** argv)
 		glClear(GL_DEPTH_BUFFER_BIT);
 
 		p.keyboard();
-		p.update(time, world);
+		p.update(time);
 
 		//=== Settings of the mouse
 		POINT mousexy;
