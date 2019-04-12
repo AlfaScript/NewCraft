@@ -13,7 +13,8 @@ int main(int argc, char** argv)
 	gluPerspective(90., 1., 1., 2000.);
 	glEnable(GL_TEXTURE_2D);
 	ShowCursor(false);
-
+	
+	WORLD world;
 	world.worldGeneration(2);
 	//=== Textures
 	sf::Texture t;
@@ -78,7 +79,7 @@ int main(int argc, char** argv)
 		glClear(GL_DEPTH_BUFFER_BIT);
 
 		p.keyboard();
-		p.update(time);
+		p.update(time, world);
 
 		//=== Settings of the mouse
 		POINT mousexy;
@@ -89,10 +90,10 @@ int main(int argc, char** argv)
 		angleX += (static_cast<int>(xt) - mousexy.x) / 4.f; // 4 Ч чувствительность 
 		angleY += (static_cast<int>(yt) - mousexy.y) / 4.f;
 
-		if (angleY < -89.0)
-			angleY = -89.0;
-		if (angleY > 89.0)
-			angleY = 89.0;
+		if (angleY < -89.0f)
+			angleY = -89.0f;
+		if (angleY > 89.0f)
+			angleY = 89.0f;
 
 		SetCursorPos(static_cast<int>(xt), static_cast<int>(yt));
 		//===================

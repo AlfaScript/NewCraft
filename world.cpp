@@ -1,4 +1,5 @@
 #include "world.hpp"
+float angleX = 0.f, angleY = 0.f;
 
 GLuint LoadTexture(sf::String name)
 {
@@ -267,23 +268,23 @@ Player::~Player()
 {
 }
 
-void Player::update(float time)
+void Player::update(float time, const WORLD & world)
 {
 	if (!onGround)
 		dy -= 1.5f * time;
 	onGround = false;
 
 	x += dx * time;
-	collision(dx, 0.f, 0.f);
+	collision(dx, 0.f, 0.f, world);
 	y += dy * time;
-	collision(0.f, dy, 0.f);
+	collision(0.f, dy, 0.f, world);
 	z += dz * time;
-	collision(0.f, 0.f, dz);
+	collision(0.f, 0.f, dz, world);
 
 	dx = dz = 0.f;
 }
 
-void Player::collision(float Dx, float Dy, float Dz)
+void Player::collision(float Dx, float Dy, float Dz, const WORLD & world)
 {
 	for (int X = static_cast<int>((x - w) / size); X < (x + w) / size; X++)
 	{
@@ -371,7 +372,7 @@ WORLD::~WORLD()
 	delete[] worlds;
 }
 
-bool WORLD::check(int x, int y, int z)
+bool WORLD::check(int x, int y, int z) const
 {
 	if ((x < 0) || (x >= static_cast<int>(worldSizeX)) ||
 		(y < 0) || (y >= static_cast<int>(worldSizeY)) ||
