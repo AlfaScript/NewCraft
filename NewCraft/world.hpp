@@ -124,7 +124,7 @@ void menu(sf::RenderWindow & window)
 {
 	ShowCursor(true);
 	bool isMenu = true, isAbout = false;
-	unsigned short int menuNum = 0;
+	uint16_t menuNum = 0, previousMenuNum = 0;
 
 	sf::Font font;
 	font.loadFromFile("resources/menu/majorforce.ttf");
@@ -135,7 +135,8 @@ void menu(sf::RenderWindow & window)
 	menu2.setOutlineThickness(1);
 	menu3.setPosition(WIDTH / 6.f - 100, HEIGHT / 2.f + 60.f);
 	menu3.setOutlineThickness(1);
-
+	int i = 1;
+	sf::Clock clock;
 	sf::Texture background;
 	if (!background.loadFromFile("resources/menu/backgrounds/firstBackground.png"))
 	{
@@ -144,8 +145,6 @@ void menu(sf::RenderWindow & window)
 	}
 	sf::Sprite back(background);
 	back.setColor(sf::Color(255, 255, 255, 200));
-	int i = 1;
-	sf::Clock clock;
 	sf::Texture backPhotoTex;
 	if (!backPhotoTex.loadFromFile("resources/menu/backgrounds/background1.png"))
 	{
@@ -161,8 +160,18 @@ void menu(sf::RenderWindow & window)
 	sf::Sprite backPhoto(backPhotoTex), buttonPhoto(buttonBackground);
 	sf::Text about("The game is designed and created by Y\nThe design of the game was developed by A\nPress SPACE to next", font, 50);
 
+	sf::SoundBuffer buffer;
+	buffer.loadFromFile("resources/menu/buttonsSound.ogg");
+	sf::Sound sound;
+	sound.setBuffer(buffer);
+	sf::SoundBuffer bufferAbout;
+	bufferAbout.loadFromFile("resources/menu/about.wav");
+	sf::Sound aboutSound;
+	aboutSound.setBuffer(bufferAbout);
+
 	while (isMenu)
 	{
+		previousMenuNum = menuNum;
 		menuNum = 0;
 		window.clear();
 		menu1.setFillColor(sf::Color(255, 207, 133));
@@ -212,7 +221,7 @@ void menu(sf::RenderWindow & window)
 			menuNum = 3;
 		}
 		else
-			menuNum = 0;
+			menuNum = previousMenuNum = 0;
 
 		sf::Event event;
 		while (window.pollEvent(event))
@@ -247,6 +256,7 @@ void menu(sf::RenderWindow & window)
 
 		if (isAbout)
 		{
+			aboutSound.play();
 			for (float y = 0.f; y < (HEIGHT / 3.f); ++y)
 			{
 				window.clear();
@@ -264,6 +274,7 @@ void menu(sf::RenderWindow & window)
 			}
 			while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Space));
 			isAbout = false;
+			aboutSound.stop();
 			window.clear();
 		}
 
@@ -277,6 +288,8 @@ void menu(sf::RenderWindow & window)
 
 		if (menuNum)
 		{
+			if (previousMenuNum != menuNum)
+				sound.play();
 			buttonPhoto.setColor(sf::Color(255, 255, 255, 150));
 			window.pushGLStates();
 			window.draw(buttonPhoto);
