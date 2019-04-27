@@ -1,5 +1,7 @@
 #include "stdafx.h"
-#include "world.hpp"
+
+float angleX = 0.f, angleY = 0.f;
+WORLD * WORLD::p_instance = nullptr;
 
 int main(int argc, char** argv)
 {
@@ -15,7 +17,9 @@ int main(int argc, char** argv)
 	glEnable(GL_TEXTURE_2D);
 	ShowCursor(false);
 
-	world.worldGeneration(2);
+	//TODO: write menu for choose the mode of world generatation
+	WORLD::getInstance()->worldGeneration(NORMAL);
+
 	//=== Textures
 	sf::Texture t;
 	if (!t.loadFromFile("resources/cursor.png"))
@@ -27,10 +31,13 @@ int main(int argc, char** argv)
 	s.setOrigin(8.f, 8.f);
 	s.setPosition(WIDTH / 2.f, HEIGHT / 2.f);
 
-	srand(static_cast<unsigned int>(time(nullptr)));
-	unsigned int skyBoxRand = 1 + rand() % 10;
+	std::random_device r;
+	std::default_random_engine e1(r());
+	std::uniform_int_distribution<uint16_t> uniform_dist(1, 10);
+	uint16_t skyBoxRand = uniform_dist(e1);
 	if (skyBoxRand > 3)
 		skyBoxRand = 3;
+	
 	GLuint skybox[6];
 	skybox[0] = LoadTexture("resources/skyBoxs/skybox" + std::to_string(skyBoxRand) + "/skybox_front.bmp");
 	skybox[1] = LoadTexture("resources/skyBoxs/skybox" + std::to_string(skyBoxRand) + "/skybox_back.bmp");
@@ -87,7 +94,7 @@ int main(int argc, char** argv)
 		double xt = window.getPosition().x + 400.;
 		double yt = window.getPosition().y + 300.;
 
-		angleX += (static_cast<int>(xt) - mousexy.x) / 4.f; // 4 Ч чувствительность 
+		angleX += (static_cast<int>(xt) - mousexy.x) / 4.f; // 4 - sensetive
 		angleY += (static_cast<int>(yt) - mousexy.y) / 4.f;
 
 		if (angleY < -89.0f)
@@ -104,26 +111,26 @@ int main(int argc, char** argv)
 			float y = p.getY() + p.getH() / 2.f;
 			float z = p.getZ();
 
-			int X, Y, Z, oldX, oldY, oldZ;
-			for (int dist = 0; dist < 120; ++dist) // радиус действи€
+			uint16_t X, Y, Z, oldX, oldY, oldZ;
+			for (uint16_t dist = 0; dist < 120; ++dist) // distance of power
 			{
 				x += static_cast<float>(-sin(angleX / 180.f * PI));
-				X = static_cast<int>(x / size);
+				X = static_cast<uint16_t>(x / size);
 				y += static_cast<float>(tan(angleY / 180.f * PI));
-				Y = static_cast<int>(y / size);
+				Y = static_cast<uint16_t>(y / size);
 				z += static_cast<float>(-cos(angleX / 180.f * PI));
-				Z = static_cast<int>(z / size);
+				Z = static_cast<uint16_t>(z / size);
 
-				if (world.check(X, Y, Z))
+				if (WORLD::getInstance()->check(X, Y, Z))
 				{
 					if (mLeft)
 					{
-						world.setBox(X, Y, Z, false);
+						WORLD::getInstance()->setBox(X, Y, Z, false);
 						break;
 					}
 					else
 					{
-						world.setBox(oldX, oldY, oldZ, true);
+						WORLD::getInstance()->setBox(oldX, oldY, oldZ, true);
 						break;
 					}
 				}
@@ -139,26 +146,22 @@ int main(int argc, char** argv)
 		gluLookAt(p.getX(), p.getY() + p.getH() / 2, p.getZ(), p.getX() - sin(angleX / 180 * PI), p.getY() + p.getH() / 2 + (tan(angleY / 180 * PI)), p.getZ() - cos(angleX / 180 * PI), 0., 1., 0.);
 
 		//=== Draw boxes
-		int R = 15;
-		int X = static_cast<int>(p.getX() / size);
-		int Y = static_cast<int>(p.getY() / size);
-		int Z = static_cast<int>(p.getZ() / size);
-
-		for (int x = X - R; x < X + R; x++)
-		{
-			for (int y = 0; y < 25; y++)
-			{
-				for (int z = Z - R; z < Z + R; z++)
+		uint16_t radius = 15;
+		int16_t X = static_cast<int16_t>(p.getX() / size),
+			Y = static_cast<int16_t>(p.getY() / size),
+			Z = static_cast<int16_t>(p.getZ() / size);
+		
+		for (int16_t x = X - radius; x < X + radius; ++x)
+			for (int16_t y = Y - radius; y < Y + radius; ++y)
+				for (int16_t z = Z - radius; z < Z + radius; ++z)
 				{
-					if (!world.check(x, y, z))
+					if (!WORLD::getInstance()->check(x, y, z))
 						continue;
 
 					glTranslatef(size * x + size / 2.f, size * y + size / 2.f, size * z + size / 2.f);
 					createBox(box, size / 2.f);
 					glTranslatef(-size * x - size / 2.f, -size * y - size / 2.f, -size * z - size / 2.f);
 				}
-			}
-		}
 
 		glTranslatef(p.getX(), p.getY(), p.getZ());
 		createBox(skybox, 1000.f);
@@ -171,5 +174,6 @@ int main(int argc, char** argv)
 		window.display();
 	}
 
+	WORLD::DestroyInstance();
 	return 0;
 }
